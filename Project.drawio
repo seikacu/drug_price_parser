@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-10-27T20:01:20.366Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.962 YaBrowser/23.9.1.962 Yowser/2.5 Safari/537.36" etag="mvSYNR9sd41VJ4UEhZNG" version="22.0.8" type="github">
+<mxfile host="app.diagrams.net" modified="2023-10-27T20:11:12.789Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.962 YaBrowser/23.9.1.962 Yowser/2.5 Safari/537.36" etag="QGlEWPVk0w8Rjwiwwum6" version="22.0.8" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
     <mxGraphModel dx="2074" dy="807" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -10,8 +10,40 @@
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-3" value="Данные на вход. CSV файл со списком ссылок на товары&lt;br&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="40" y="30" width="120" height="70" as="geometry" />
         </mxCell>
+        <mxCell id="yI-EpUf1qR6Sc0JCAl4H-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="yI-EpUf1qR6Sc0JCAl4H-0" target="yI-EpUf1qR6Sc0JCAl4H-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yI-EpUf1qR6Sc0JCAl4H-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="yI-EpUf1qR6Sc0JCAl4H-0" target="yI-EpUf1qR6Sc0JCAl4H-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yI-EpUf1qR6Sc0JCAl4H-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="yI-EpUf1qR6Sc0JCAl4H-0" target="yI-EpUf1qR6Sc0JCAl4H-22">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="230" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="441" y="190" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yI-EpUf1qR6Sc0JCAl4H-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.375;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="yI-EpUf1qR6Sc0JCAl4H-0" target="yI-EpUf1qR6Sc0JCAl4H-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="yI-EpUf1qR6Sc0JCAl4H-0" value="Разбор CSV.&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;1) Определяем город&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;2) Определяем площадку&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&amp;nbsp;" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="270" y="15" width="180" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="yI-EpUf1qR6Sc0JCAl4H-4" value="Парсинг.&lt;br&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;1)&amp;nbsp;Название сайта&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;2)&amp;nbsp;Город&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;3)&amp;nbsp;Название препарата&lt;/span&gt;&lt;/div&gt;4)&amp;nbsp;Стоимость (если есть несколько цен, то самую низкую)&lt;br&gt;&lt;div style=&quot;&quot;&gt;5)&amp;nbsp;Рейтинг&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;6)&amp;nbsp;&amp;nbsp;Количество отзывов&lt;br&gt;&lt;/div&gt;" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="40" y="190" width="340" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="yI-EpUf1qR6Sc0JCAl4H-5" value="Подключить БД" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="630" y="10" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="yI-EpUf1qR6Sc0JCAl4H-6" value="Подключить прокси" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="620" y="90" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="yI-EpUf1qR6Sc0JCAl4H-8" value="" style="shape=waypoint;sketch=0;size=6;pointerEvents=1;points=[];fillColor=default;resizable=0;rotatable=0;perimeter=centerPerimeter;snapToPoint=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="650" y="30" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="yI-EpUf1qR6Sc0JCAl4H-22" value="Капча&lt;br&gt;(если потребуется)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="630" y="170" width="140" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
