@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-10-27T21:04:24.278Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.962 YaBrowser/23.9.1.962 Yowser/2.5 Safari/537.36" etag="e_PJYJFbM14f-EuxWdV4" version="22.0.8" type="github">
+<mxfile host="app.diagrams.net" modified="2023-10-27T21:05:31.222Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.962 YaBrowser/23.9.1.962 Yowser/2.5 Safari/537.36" etag="7PmVoFKU1SfWroY4eV56" version="22.0.8" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
     <mxGraphModel dx="2074" dy="807" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -108,7 +108,7 @@
         <mxCell id="yI-EpUf1qR6Sc0JCAl4H-172" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.011;entryY=0.433;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="yI-EpUf1qR6Sc0JCAl4H-159" target="yI-EpUf1qR6Sc0JCAl4H-170">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="yI-EpUf1qR6Sc0JCAl4H-173" value="Площадки&lt;br&gt;1)&amp;nbsp;www.eapteka.ru&lt;br&gt;2)&amp;nbsp;apteka.ru&lt;br&gt;3)&amp;nbsp;nsk.zhivika.ru&lt;br&gt;4)&amp;nbsp;lekkupi.ru&lt;br&gt;5)&amp;nbsp;maksavit.ru" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="yI-EpUf1qR6Sc0JCAl4H-173" value="Площадки&lt;br&gt;1)&amp;nbsp;www.eapteka.ru&lt;br&gt;2)&amp;nbsp;apteka.ru&lt;br&gt;3) zhivika.ru&lt;br&gt;4)&amp;nbsp;lekkupi.ru&lt;br&gt;5)&amp;nbsp;maksavit.ru" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="430" y="210" width="140" height="150" as="geometry" />
         </mxCell>
         <mxCell id="yI-EpUf1qR6Sc0JCAl4H-53" value="Table" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
