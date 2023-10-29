@@ -118,6 +118,7 @@ def get_soup(link, site, is_moscow: int):
     file_name = ""
     link_split = link.split('/')
 
+
     if site == 1 and is_moscow == 0:
         file_name = link_split[5]
     if site == 1 and is_moscow == 1:

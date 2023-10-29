@@ -41,6 +41,7 @@ def check_site(link: str):
         return 5
 
 
+
 def get_csv_file(path, file_name):
     with open(f'{path}{file_name}', newline='', encoding='utf-8') as f:
         reader = csv.reader(f, delimiter='\t')

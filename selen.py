@@ -142,6 +142,7 @@ def get_data(link, site, is_moscow, city, area, check=None):
             print(f'Сайт: {area}, Город: {city}, Название: {item}, Стоимость: {price}, Рейтинг: {rating}, Кол-во '
                   f'отзывов: {num_rev}')
 
+
         # driver.execute_script("localStorage.setItem('selected_city', 'Москва');")
         time.sleep(1)
     except NoSuchElementException as ex:

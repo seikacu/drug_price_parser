@@ -15,6 +15,7 @@ def connect_db():
     return connection
 
 
+
 def check_exist_table(connection):
     with connection.cursor() as cursor:
         cursor.execute("select exists(select * from information_schema.tables where table_name=%s)", ('ads',))
