@@ -5,22 +5,20 @@ import re
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException
-from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver.support import expected_conditions as ex_cond
 from webdriver_manager.chrome import ChromeDriverManager
 
 import secure
+from db_sql import insert_to_table, check_url_in_bd
 
 
 def set_driver_options(options):
     # безголовый режим браузера
     # options.headless = True
-    # options.add_argument('--headless')
-    # options.add_argument('--headless=new')
-    # options.add_argument('--blink-settings=imagesEnabled=false')
+    options.add_argument('--headless=new')
+    options.add_argument('--blink-settings=imagesEnabled=false')
     options.add_argument("--disable-infobars")
     options.add_argument("--disable-notifications")
     options.add_argument("--deny-permission-prompts")
@@ -88,8 +86,7 @@ def get_selenium_driver(use_proxy=False):
     return driver
 
 
-def get_data(link, site, is_moscow, city, area, check=None):
-    driver = None
+def get_data(connection, driver: webdriver.Chrome, link, site, is_moscow, city, site_name, csv_name, check=None):
     try:
         file_name = ""
         link_split = link.split('/')
@@ -98,7 +95,6 @@ def get_data(link, site, is_moscow, city, area, check=None):
         if site == 1 and is_moscow == 1:
             file_name = link_split[4]
 
-        driver = get_selenium_driver(True)
         driver.get(link)
         page_content = driver.page_source
         with open(f'data/{file_name}.html', 'w') as file:
@@ -108,7 +104,7 @@ def get_data(link, site, is_moscow, city, area, check=None):
         soup = BeautifulSoup(src, "lxml")
         if site == 1:
             # Название препарата
-            item = ''
+            product_name = ''
             h1 = soup.find('h1')
             if h1 is None:
                 if check is None:
@@ -119,12 +115,17 @@ def get_data(link, site, is_moscow, city, area, check=None):
                         link += i + '/'
                     link = link[:-1]
                     if 'city-' in link_split[3]:
-                        get_data(link, site, is_moscow, city, area, 1)
+                        if check_url_in_bd(connection, link):
+                            print(f'url: {link} уже есть в БД')
+                            return
+                        get_data(connection, driver, link, site, is_moscow, city, site_name, csv_name, 1)
                 else:
                     print("Товар не найден")
+                    insert_to_table(connection, link, city, 'Товар не найден', '', '', '',
+                                    site_name, csv_name)
                     return
             else:
-                item = h1.text
+                product_name = h1.text
             price_class = soup.find('span', {'class': 'offer-tools__price_num-strong'})
             if price_class is None:
                 return
@@ -138,16 +139,14 @@ def get_data(link, site, is_moscow, city, area, check=None):
                 rating = rating_class[1][-1:]
             num_rev_str = soup.find('span', {'class': 'rating__common-subtitle'}).text
             # Количество отзывов
-            num_rev = re.findall(r'\d+', num_rev_str)[0]
-            print(f'Сайт: {area}, Город: {city}, Название: {item}, Стоимость: {price}, Рейтинг: {rating}, Кол-во '
-                  f'отзывов: {num_rev}')
-
-
-        # driver.execute_script("localStorage.setItem('selected_city', 'Москва');")
+            count = re.findall(r'\d+', num_rev_str)[0]
+            print(f'Сайт: {site_name}, Город: {city}, Название: {product_name}, Стоимость: {price},'
+                  f' Рейтинг: {rating}, Кол-во отзывов: {count}')
+            insert_to_table(connection, link, city, product_name, price, rating, count,
+                            site_name, csv_name)
         time.sleep(1)
     except NoSuchElementException as ex:
-        # reason = "Элемент не найден"
-        # secure.log.write_log(reason, ex)
+        print(ex)
+        reason = "Элемент не найден"
+        secure.log.write_log(reason, ex)
         pass
-    finally:
-        driver.quit()
