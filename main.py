@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 import secure
 from db_sql import create_table, connect_db, check_exist_table, get_result, check_url_in_bd, insert_to_table
 from selen import get_data as go_selen, get_selenium_driver
-from requests_html import HTMLSession
+# from requests_html import HTMLSession
 
 
 def cur_to_lat(string, t, sep='-'):
@@ -161,7 +161,8 @@ def start(path, file_name):
                     if check_url_in_bd(connection, link):
                         print(f'url: {link} уже есть в БД')
                         continue
-                    session = HTMLSession()
+                        pass
+                    # session = HTMLSession()
 
                     cookies = {
                         'XSRF-TOKEN': 'eyJpdiI6IkRyQjJRSWN4Q081ZkRyOUtBRWRCeXc9PSIsInZhbHVlIjoiSVNuczZxa0VUR3N4a1wvbTFPVGR0UXJCM0cyUVwvbExvMjBWRDVuRmo0ZUZEV3NwaUJTaFJQV2s2b1JheVFHc05iIiwibWFjIjoiZTg3NWQwN2Y4NTA1M2MwZWY2MGY2ZjkzOWRlMzRhYWI3ZTdkMzcxNGE5MjE4NDgxMjU0ODA3NGNiZGQ2NDM5YiJ9',
@@ -190,16 +191,17 @@ def start(path, file_name):
                         'Sec-Fetch-Site': 'none',
                         'Sec-Fetch-User': '?1',
                     }
-
-                    r = session.get(link, cookies=cookies, headers=headers, proxies=secure.proxies).text
-                    print(r)
+                    #
+                    # r = session.get(link, cookies=cookies, headers=headers, proxies=secure.proxies).text
+                    # print(r)
 
                 elif site == 4:
                     if check_url_in_bd(connection, link):
                         print(f'url: {link} уже есть в БД')
                         continue
+                        pass
 
-                    session = HTMLSession()
+                    # session = HTMLSession()
 
                     cookies = {
                         'cf_clearance': 'HRubcUejoIwRf9mC946dqMFyPY7cXvFt88ghB7Udd_k-1698784758-0-1-bef57b7f.aeb984cf.e9f4249f-150.0.0',
@@ -232,14 +234,15 @@ def start(path, file_name):
                     }
 
                     # r = requests.get(link, cookies=cookies, headers=headers, proxies=secure.proxies)
-                    r = session.get(link, cookies=cookies, headers=headers, proxies=secure.proxies)
-                    r.html.render()
-                    print(r.text)
+                    # r = session.get(link, cookies=cookies, headers=headers, proxies=secure.proxies)
+                    # r.html.render()
+                    # print(r.text)
 
                 elif site == 5:
                     if check_url_in_bd(connection, link):
                         print(f'url: {link} уже есть в БД')
                         continue
+                        pass
     except Exception as _ex:
         secure.log.write_log("create_table_ads ", _ex)
         print("Error while working with PostgreSQL", _ex)
@@ -253,7 +256,7 @@ def start(path, file_name):
 
 def main():
     path = "data/"
-    file_name = "example5.csv"
+    file_name = "example3.csv"
     print("start")
     start(path, file_name)
     get_result(file_name[:-4])
