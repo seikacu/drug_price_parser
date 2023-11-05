@@ -161,5 +161,6 @@ cython_debug/
 
 data
 result
+trash
 proxy_auth_plugin.zip
 secure.py

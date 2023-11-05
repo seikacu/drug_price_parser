@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+
+#  python_server:
+#    image: python:3.11
+#    container_name: python_serv
+#    command: python -m http.server 1234
+#    volumes:
+#      - .:/usr/src/app
+#    ports:
+#      - "1234:1234"
+#    depends_on:
+#      - pgdb
+
+  pgdb:
+    image: postgres
+    ports:
+      - "5435:5432"
+    restart: always
+    environment:
+      POSTGRES_DB: data
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: P@ssw0rd
+    container_name: pgdb
+    volumes:
+      - pgdbdata:/var/lib/postgresql/data/
+
+  adminer:
+      image: adminer
+      restart: always
+      depends_on:
+        - pgdb
+      ports:
+        - "8080:8080"
+
+volumes:
+  pgdbdata: null

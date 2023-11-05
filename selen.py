@@ -46,17 +46,6 @@ def get_path_profile():
         raise Exception("Unsupported platform!")
 
 
-def get_path_webdriver():
-    if platform.system() == "Windows":
-        return r"C:\WebDriver\chromedriver\chromedriver.exe"
-    elif platform.system() == "Linux":
-        return "/home/seikacu/webdriver/chromedriver"
-    elif platform.system() == "Darwin":
-        return "webdriver/chromedriver-macos"
-    else:
-        raise Exception("Unsupported platform!")
-
-
 def get_selenium_driver(use_proxy=False):
     options = webdriver.ChromeOptions()
     set_driver_options(options)
@@ -81,7 +70,6 @@ def get_selenium_driver(use_proxy=False):
     caps['pageLoadStrategy'] = 'eager'
 
     service = Service(ChromeDriverManager().install(), desired_capabilities=caps)
-    # executable_path=get_path_webdriver())
     driver = webdriver.Chrome(service=service, options=options)
     return driver
 
