@@ -7,8 +7,12 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
+import undetected_chromedriver as uc
 
 import secure
 from db_sql import insert_to_table, check_url_in_bd
@@ -17,18 +21,18 @@ from db_sql import insert_to_table, check_url_in_bd
 def set_driver_options(options):
     # безголовый режим браузера
     # options.headless = True
-    options.add_argument('--headless=new')
+    # options.add_argument('--headless=new')
     options.add_argument('--blink-settings=imagesEnabled=false')
     options.add_argument("--disable-infobars")
     options.add_argument("--disable-notifications")
-    options.add_argument("--deny-permission-prompts")
+    # options.add_argument("--deny-permission-prompts")
     # options.add_argument("--enable-strict-powerful-feature-restrictions")
-    options.add_argument("--disable-javascript")
+    # options.add_argument("--disable-javascript")
     options.add_argument("--disable-geolocation")
     prefs = {
         'profile.default_content_settings.geolocation': 2,
         'profile.managed_default_content_settings.images': 2,
-        'profile.managed_default_content_settings.javascript': 2
+        # 'profile.managed_default_content_settings.javascript': 2
     }
     options.add_experimental_option("prefs", prefs)
     # options.add_argument("--deny-permission-prompts")
@@ -74,23 +78,25 @@ def get_selenium_driver(use_proxy=False):
     return driver
 
 
-def get_data(connection, driver: webdriver.Chrome, link, site, is_moscow, city, site_name, csv_name, check=None):
+def get_data(connection, driver: webdriver.Chrome, link, site, is_moscow, city, lat_city, site_name, csv_name,
+             check=None):
     try:
         file_name = ""
         link_split = link.split('/')
         if site == 1 and is_moscow == 0:
             file_name = link_split[5]
-        if site == 1 and is_moscow == 1:
+        elif (site == 1 and is_moscow == 1) or site == 4:
             file_name = link_split[4]
 
         driver.get(link)
-        page_content = driver.page_source
-        with open(f'data/{file_name}.html', 'w') as file:
-            file.write(page_content)
-        with open(f"data/{file_name}.html", encoding="utf-8") as file:
-            src = file.read()
-        soup = BeautifulSoup(src, "lxml")
+
         if site == 1:
+            page_content = driver.page_source
+            with open(f'data/{file_name}.html', 'w') as file:
+                file.write(page_content)
+            with open(f"data/{file_name}.html", encoding="utf-8") as file:
+                src = file.read()
+            soup = BeautifulSoup(src, "lxml")
             # Название препарата
             product_name = ''
             h1 = soup.find('h1')
@@ -132,7 +138,37 @@ def get_data(connection, driver: webdriver.Chrome, link, site, is_moscow, city, 
                   f' Рейтинг: {rating}, Кол-во отзывов: {count}')
             insert_to_table(connection, link, city, product_name, price, rating, count,
                             site_name, csv_name)
+        elif site == 4:
+            WebDriverWait(driver, 15).until(
+                expected_conditions.presence_of_element_located(
+                    (By.CLASS_NAME, "header-top-container-changer")
+                ))
+
+            cook_but = driver.find_element(By.CLASS_NAME, 'cookie-accept-button')
+            cook_but.click()
+            select_city = driver.find_element(By.XPATH, f"//a[contains(@data-location-code,'{lat_city}')]")
+            if select_city is None:
+                print("В данном городе нет аптек")
+            else:
+                driver.execute_script("arguments[0].click();", select_city)
+                time.sleep(1)
+                page_content = driver.page_source
+                with open(f'data/{file_name}.html', 'w') as file:
+                    file.write(page_content)
+                with open(f"data/{file_name}.html", encoding="utf-8") as file:
+                    src = file.read()
+                soup = BeautifulSoup(src, "lxml")
+                product_name = soup.find('h1').text
+                price = soup.find('span', {'class': 'price'}).text
+                rating = ''
+                count = ''
+                print(f'Сайт: {site_name}, Город: {city}, Название: {product_name}, Стоимость: {price},'
+                      f' Рейтинг: {rating}, Кол-во отзывов: {count}')
+                insert_to_table(connection, link, city, product_name, price, rating, count,
+                                site_name, csv_name)
+
         time.sleep(1)
+
     except NoSuchElementException as ex:
         print(ex)
         reason = "Элемент не найден"
