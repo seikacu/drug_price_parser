@@ -4,9 +4,6 @@ from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.wait import WebDriverWait
 
 import secure
 from db_sql import create_table, connect_db, check_exist_table, get_result, check_url_in_bd, insert_to_table
@@ -90,7 +87,7 @@ def start(path, file_name):
                 # site = 3
                 link_split = link.split('/')
                 site_name = link_split[2]
-                if site == 1 or site == 4:
+                if site == 1 or site == 4 or site == 5:
                     is_moscow = check_city(lat_city)
                     if site == 1 and is_moscow == 0:
                         link_split.insert(3, lat_city)
@@ -165,20 +162,6 @@ def start(path, file_name):
                         continue
                         pass
 
-                # elif site == 4:
-                #     if check_url_in_bd(connection, link):
-                #         print(f'url: {link} уже есть в БД')
-                #         continue
-                #         pass
-                    # driver = get_selenium_driver()
-                    # driver.get(link)
-
-                elif site == 5:
-                    if check_url_in_bd(connection, link):
-                        print(f'url: {link} уже есть в БД')
-                        continue
-                        pass
-
     except Exception as _ex:
         secure.log.write_log("create_table_ads ", _ex)
         print("Error while working with PostgreSQL", _ex)
@@ -192,7 +175,7 @@ def start(path, file_name):
 
 def main():
     path = "data/"
-    file_name = "example5.csv"
+    file_name = "example6.csv"
     print("start")
     start(path, file_name)
     # get_result(file_name[:-4])

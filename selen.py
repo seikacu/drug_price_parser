@@ -12,7 +12,6 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
-import undetected_chromedriver as uc
 
 import secure
 from db_sql import insert_to_table, check_url_in_bd
@@ -52,6 +51,7 @@ def get_path_profile():
 
 def get_selenium_driver(use_proxy=False):
     options = webdriver.ChromeOptions()
+    # options.headless = False
     set_driver_options(options)
 
     if use_proxy:
@@ -81,22 +81,18 @@ def get_selenium_driver(use_proxy=False):
 def get_data(connection, driver: webdriver.Chrome, link, site, is_moscow, city, lat_city, site_name, csv_name,
              check=None):
     try:
-        file_name = ""
+        file_name = ''
         link_split = link.split('/')
         if site == 1 and is_moscow == 0:
             file_name = link_split[5]
-        elif (site == 1 and is_moscow == 1) or site == 4:
+        elif (site == 1 and is_moscow == 1) or site == 4 or site == 5:
             file_name = link_split[4]
 
         driver.get(link)
 
         if site == 1:
-            page_content = driver.page_source
-            with open(f'data/{file_name}.html', 'w') as file:
-                file.write(page_content)
-            with open(f"data/{file_name}.html", encoding="utf-8") as file:
-                src = file.read()
-            soup = BeautifulSoup(src, "lxml")
+
+            soup = get_soup(file_name, driver.page_source)
             # Название препарата
             product_name = ''
             h1 = soup.find('h1')
@@ -143,7 +139,6 @@ def get_data(connection, driver: webdriver.Chrome, link, site, is_moscow, city, 
                 expected_conditions.presence_of_element_located(
                     (By.CLASS_NAME, "header-top-container-changer")
                 ))
-
             cook_but = driver.find_element(By.CLASS_NAME, 'cookie-accept-button')
             cook_but.click()
             select_city = driver.find_element(By.XPATH, f"//a[contains(@data-location-code,'{lat_city}')]")
@@ -152,25 +147,64 @@ def get_data(connection, driver: webdriver.Chrome, link, site, is_moscow, city, 
             else:
                 driver.execute_script("arguments[0].click();", select_city)
                 time.sleep(1)
-                page_content = driver.page_source
-                with open(f'data/{file_name}.html', 'w') as file:
-                    file.write(page_content)
-                with open(f"data/{file_name}.html", encoding="utf-8") as file:
-                    src = file.read()
-                soup = BeautifulSoup(src, "lxml")
+
+                soup = get_soup(file_name, driver.page_source)
                 product_name = soup.find('h1').text
-                price = soup.find('span', {'class': 'price'}).text
+                price_soup = soup.find('span', {'class': 'price'})
+                price = price_soup[:-2].replace(' ', '')
                 rating = ''
                 count = ''
                 print(f'Сайт: {site_name}, Город: {city}, Название: {product_name}, Стоимость: {price},'
                       f' Рейтинг: {rating}, Кол-во отзывов: {count}')
                 insert_to_table(connection, link, city, product_name, price, rating, count,
                                 site_name, csv_name)
+        elif site == 5:
+            dialog = WebDriverWait(driver, 15).until(
+                expected_conditions.presence_of_element_located(
+                    (By.XPATH, '//div[contains(@role, "dialog")]')
+                ))
+            if dialog:
+                conf_city_mod = dialog.find_element(By.XPATH, '//div[contains(@class, "confirmation-city-modal")]')
+                conf_city = conf_city_mod.text
+                conf_city_spl = conf_city.split('?')
+                conf_spl = conf_city_spl[0].split('город')
+                city_confirm = conf_spl[1][1:]
+                if city_confirm in city:
+                    but_yes = dialog.find_element(By.XPATH, '//button[contains(@class, "button--red city-btn")]')
+                    but_yes.click()
+                    time.sleep(1)
+                else:
+                    but_no = dialog.find_element(By.XPATH, '//button[contains(@class, "cancel-btn")]')
+                    but_no.click()
+                    time.sleep(1)
+            choose_city_div = driver.find_element(By.XPATH, '//div[contains(@role, "dialog")]')
+            city_but = choose_city_div.find_element(By.XPATH, f'//button[text()="{city}"]')
+            city_but.click()
 
-        time.sleep(1)
+            soup = get_soup(file_name, driver.page_source)
+            product_name = soup.find('h1').text
+            price_div = soup.find('div', {'class': 'price-info__price'})
+            price_val = price_div.find('span', {'class': 'price-value'}).text
+            price = price_val[:-2].replace(' ', '')
+            rating_span = soup.find('span', {'class': 'product-stars-value'}).text
+            rating = re.findall(r'\d+', rating_span)[0]
+            count_span = soup.find('span', {'class': 'product-stars-label'}).text
+            count = re.findall(r'\d+', count_span)[0]
+            print(f'Сайт: {site_name}, Город: {city}, Название: {product_name}, Стоимость: {price},'
+                  f' Рейтинг: {rating}, Кол-во отзывов: {count}')
+            insert_to_table(connection, link, city, product_name, price, rating, count,
+                            site_name, csv_name)
 
     except NoSuchElementException as ex:
         print(ex)
         reason = "Элемент не найден"
         secure.log.write_log(reason, ex)
         pass
+
+
+def get_soup(file_name, page_content):
+    with open(f'data/{file_name}.html', 'w') as file:
+        file.write(page_content)
+    with open(f"data/{file_name}.html", encoding="utf-8") as file:
+        src = file.read()
+    return BeautifulSoup(src, "lxml")
