@@ -6,6 +6,8 @@ import re
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import StaleElementReferenceException
+
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -51,7 +53,6 @@ def get_path_profile():
 
 def get_selenium_driver(use_proxy=False):
     options = webdriver.ChromeOptions()
-    # options.headless = False
     set_driver_options(options)
 
     if use_proxy:
@@ -87,6 +88,8 @@ def get_data(connection, driver: webdriver.Chrome, link, site, is_moscow, city, 
             file_name = link_split[5]
         elif (site == 1 and is_moscow == 1) or site == 4 or site == 5:
             file_name = link_split[4]
+        elif site == 3:
+            file_name = link_split[-1]
 
         driver.get(link)
 
@@ -134,7 +137,34 @@ def get_data(connection, driver: webdriver.Chrome, link, site, is_moscow, city, 
                   f' Рейтинг: {rating}, Кол-во отзывов: {count}')
             insert_to_table(connection, link, city, product_name, price, rating, count,
                             site_name, csv_name)
+        elif site == 3:
+
+            head_row_city = driver.find_element(By.XPATH, '//div[contains(@class, "m-header-top-row__city")]')
+            if head_row_city:
+                head_row_city.click()
+                time.sleep(1)
+                try:
+                    modal = driver.find_element(By.ID, 'modal')
+                    cities = modal.find_elements(By.XPATH, '//a[contains(@data-action, "changeCity")]')
+                    for city_a in cities:
+                        gorod = city_a.text
+                        if gorod == city:
+                            city_a.click()
+                except StaleElementReferenceException:
+                    pass
+                soup = get_soup(file_name, driver.page_source)
+                product_name = soup.find('h1').text
+                price_div = soup.find('div', {'class': 'tnyXy7x _1nPhdxw'}).text
+                price = price_div.split(' ')[1]
+                rating = ''
+                count = ''
+                print(f'Сайт: {site_name}, Город: {city}, Название: {product_name}, Стоимость: {price},'
+                      f' Рейтинг: {rating}, Кол-во отзывов: {count}')
+                insert_to_table(connection, link, city, product_name, price, rating, count,
+                                site_name, csv_name)
+
         elif site == 4:
+
             WebDriverWait(driver, 15).until(
                 expected_conditions.presence_of_element_located(
                     (By.CLASS_NAME, "header-top-container-changer")
@@ -158,7 +188,9 @@ def get_data(connection, driver: webdriver.Chrome, link, site, is_moscow, city, 
                       f' Рейтинг: {rating}, Кол-во отзывов: {count}')
                 insert_to_table(connection, link, city, product_name, price, rating, count,
                                 site_name, csv_name)
+
         elif site == 5:
+
             dialog = WebDriverWait(driver, 15).until(
                 expected_conditions.presence_of_element_located(
                     (By.XPATH, '//div[contains(@role, "dialog")]')

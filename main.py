@@ -87,7 +87,9 @@ def start(path, file_name):
                 # site = 3
                 link_split = link.split('/')
                 site_name = link_split[2]
-                if site == 1 or site == 4 or site == 5:
+
+                if site == 1 or site == 3 or site == 4 or site == 5:
+
                     is_moscow = check_city(lat_city)
                     if site == 1 and is_moscow == 0:
                         link_split.insert(3, lat_city)
@@ -99,7 +101,9 @@ def start(path, file_name):
                         print(f'url: {link} уже есть в БД')
                         continue
                     go_selen(connection, driver, link, site, is_moscow, city, lat_city, site_name, csv_name)
+
                 elif site == 2:
+
                     if check_url_in_bd(connection, link):
                         print(f'url: {link} уже есть в БД')
                         continue
@@ -156,11 +160,6 @@ def start(path, file_name):
                           f' Рейтинг: {rating}, Кол-во отзывов: {count}')
                     insert_to_table(connection, link, city, product_name, price, rating, count,
                                     site_name, csv_name)
-                elif site == 3:
-                    if check_url_in_bd(connection, link):
-                        print(f'url: {link} уже есть в БД')
-                        continue
-                        pass
 
     except Exception as _ex:
         secure.log.write_log("create_table_ads ", _ex)
@@ -175,7 +174,7 @@ def start(path, file_name):
 
 def main():
     path = "data/"
-    file_name = "example6.csv"
+    file_name = "example7.csv"
     print("start")
     start(path, file_name)
     # get_result(file_name[:-4])
