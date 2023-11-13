@@ -1,38 +1,31 @@
-version: '3'
+version: '3.8'
 
 services:
+ script:
+  build: .
+  command: python /usr/src/app/main.py
+  container_name: script-mtg
+  depends_on:
+    - db
 
-#  python_server:
-#    image: python:3.11
-#    container_name: python_serv
-#    command: python -m http.server 1234
-#    volumes:
-#      - .:/usr/src/app
-#    ports:
-#      - "1234:1234"
-#    depends_on:
-#      - pgdb
+ db:
+  image: postgres:latest
+  container_name: dbpg-mtg
+  restart: always
+  environment:
+    POSTGRES_DB: data
+    POSTGRES_USER: postgres
+#    POSTGRES_PASSWORD: secret
+#    POSTGRES_PORT: 5432
+#  volumes:
+#    - ./.database/postgres/data:/var/lib/postgresql/data
+  ports:
+    - "5435:5432"
 
-  pgdb:
-    image: postgres
-    ports:
-      - "5435:5432"
-    restart: always
-    environment:
-      POSTGRES_DB: data
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: P@ssw0rd
-    container_name: pgdb
-    volumes:
-      - pgdbdata:/var/lib/postgresql/data/
-
-  adminer:
-      image: adminer
-      restart: always
-      depends_on:
-        - pgdb
-      ports:
-        - "8080:8080"
-
-volumes:
-  pgdbdata: null
+#  adminer:
+#      image: adminer
+#      restart: always
+#      depends_on:
+#        - pgdb
+#      ports:
+#        - "8080:8080"
