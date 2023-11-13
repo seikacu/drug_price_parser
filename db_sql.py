@@ -29,118 +29,121 @@ def create_table(connection):
             cursor.execute(
                 """CREATE TABLE pharm (
                     id serial NOT NULL,
-                    url varchar(250) NOT NULL UNIQUE,
+                    url varchar(250) NOT NULL,
                     city varchar(35) NOT NULL,
-                    product_name varchar(100),
+                    product_name varchar(250),
                     price varchar(20),
                     rating varchar(5),
                     count varchar(5),
                     site_name varchar(250) NOT NULL,
                     file_name varchar(100) NOT NULL,
-                    CONSTRAINT "ads_pk" PRIMARY KEY ("id","url")
+                    UNIQUE (url, file_name),
+                    CONSTRAINT "ads_pk" PRIMARY KEY ("id", "url")
                     ) WITH (
                     OIDS=FALSE
                 );"""
             )
 
-            print("[INFO] Table created successfully")
+            print("[INFO] Table pharm created successfully")
     except Exception as _ex:
         log.write_log("create_table ", _ex)
-        print("Error while working with PostgreSQL", _ex)
+        print("Error while working with PostgreSQL, create_table ", _ex)
 
 
-def insert_to_table(connection, url, city, product_name, price, rating, count,
-                    site_name, file_name):
+def update_rec(connection, id_db, product_name, price, rating, count):
     try:
         with connection.cursor() as cursor:
             cursor.execute(
-                f"""INSERT INTO pharm (url, city, product_name, price, rating, count,
-                site_name, file_name) VALUES 
-                    ('{url}', '{city}', '{product_name}', '{price}', '{rating}',
-                    '{count}', '{site_name}', '{file_name}');"""
+                f"""UPDATE pharm SET product_name = '{product_name}', price = '{price}', 
+                rating = '{rating}', count = '{count}' WHERE id = {id_db};"""
             )
 
     except Exception as _ex:
-        log.write_log("insert_to_table ", _ex)
-        print("Error while working with PostgreSQL", _ex)
+        log.write_log("update_rec:", _ex)
+        print("Error while working with PostgreSQL, update_rec: ", _ex)
 
 
-# def add_phone1(connection, id_db, phone):
-#     try:
-#         with connection.cursor() as cursor:
-#             cursor.execute(f"""UPDATE ads SET phone_1 = '{phone}' WHERE id = {id_db};""")
-#
-#             print(f"[INFO] Phone_1 {phone} was successfully add")
-#
-#     except Exception as _ex:
-#         log.write_log("add_phone1 ", _ex)
-#         print("Error while working with PostgreSQL", _ex)
+def insert_main_data(connection, url, city, site_name, file_name):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"""INSERT INTO pharm (url, city, site_name, file_name) VALUES 
+                    ('{url}', '{city}', '{site_name}', '{file_name}');"""
+            )
+    except Exception as _ex:
+        log.write_log("insert_main_data: ", _ex)
+        print("Error while working with PostgreSQL, insert_main_data: ", _ex)
 
 
-def get_result(csv_name):
+def get_result(files):
     connection = None
     try:
         connection = connect_db()
         with connection.cursor() as cursor:
-            sql = f"""SELECT * FROM pharm WHERE file_name = '{csv_name}';"""
-            cursor.execute(sql)
-            rows = cursor.fetchall()
-            dt = datetime.now()
-            file_name = dt.strftime('%Y-%m-%d')
-            with open(f"result/{file_name}.csv", "a", newline='', encoding="utf-8") as file:
-                writer = csv.writer(file, delimiter='\t')
-                writer.writerows(rows)
+            for file in files:
+                file_name = file[:-4]
+                sql = f"""SELECT * FROM pharm WHERE file_name = '{file_name}';"""
+                cursor.execute(sql)
+                rows = cursor.fetchall()
+                dt = datetime.now()
+                file_name = dt.strftime('%Y-%m-%d')
+                with open(f"result/{file_name}.csv", "a", newline='', encoding="utf-8") as f:
+                    writer = csv.writer(f, delimiter='\t')
+                    writer.writerows(rows)
     except Exception as _ex:
         log.write_log("get_result", _ex)
-        print("Error while working with PostgreSQL", _ex)
+        print("Error while working with PostgreSQL, get_result ", _ex)
     finally:
         if connection:
             connection.close()
             print("[INFO] Данные выгружены в CSV файл")
 
 
-def check_url_in_bd(connection, url):
+def check_url_in_bd(connection, url, csv_name):
     with connection.cursor() as cursor:
-        cursor.execute(f"""SELECT url FROM pharm WHERE url = '{url}';""")
+        cursor.execute(f"""SELECT id FROM pharm WHERE url = '{url}' AND file_name = '{csv_name}';""")
         return cursor.fetchone() is not None
 
 
-# def delete_data_from_table(file_name):
-#     connection = None
-#     try:
-#         connection = connect_db()
-#         connection.autocommit = True
-#         with connection.cursor() as cursor:
-#             cursor.execute(f"""DELETE FROM pharm WHERE file_name = '{file_name}';""")
-#             print("[INFO] Data was deleted")
-#     except Exception as _ex:
-#         log.write_log("delete_data_from_table ", _ex)
-#         print("Error while working with PostgreSQL", _ex)
-#     finally:
-#         if connection:
-#             connection.close()
-#             print("[INFO] PostgreSQL connection closed")
+def delete_data_from_table(files):
+    connection = None
+    try:
+        connection = connect_db()
+        connection.autocommit = True
+        with connection.cursor() as cursor:
+            for file in files:
+                file_name = file[:-4]
+                cursor.execute(f"""DELETE FROM pharm WHERE file_name = '{file_name}';""")
+                print(f"[INFO] Data by filename: {file_name} was deleted")
+    except Exception as _ex:
+        log.write_log("delete_data_from_table ", _ex)
+        print("Error while working with PostgreSQL, delete_table ", _ex)
+    finally:
+        if connection:
+            connection.close()
+            print("[INFO] PostgreSQL connection closed")
 
 
-# def delete_table():
-#     connection = None
-#     try:
-#         connection = connect_db()
-#         connection.autocommit = True
-#         with connection.cursor() as cursor:
-#             cursor.execute(f"""DROP TABLE IF EXISTS pharm;""")
-#             print("[INFO] TABLE was deleted")
-#     except Exception as _ex:
-#         log.write_log("delete_table ", _ex)
-#         print("Error while working with PostgreSQL", _ex)
-#     finally:
-#         if connection:
-#             connection.close()
-#             print("[INFO] PostgreSQL connection closed")
+def delete_table():
+    connection = None
+    try:
+        connection = connect_db()
+        connection.autocommit = True
+        with connection.cursor() as cursor:
+            cursor.execute(f"""DROP TABLE IF EXISTS pharm;""")
+            print("[INFO] TABLE pharm was deleted")
+    except Exception as _ex:
+        log.write_log("delete_table ", _ex)
+        print("Error while working with PostgreSQL, delete_table ", _ex)
+    finally:
+        if connection:
+            connection.close()
+            print("[INFO] PostgreSQL connection closed")
 
-# def get_data_from_table(connection, category_name):
-#     with connection.cursor() as cursor:
-#         cursor.execute(f"""SELECT id, url FROM ads WHERE launch_point = '{category_name}'
-#         AND phone_1 IS NULL;""")
-#         if cursor.fetchone is not None:
-#             return cursor.fetchall()
+
+def get_main_data(connection, file_name):
+    with connection.cursor() as cursor:
+        cursor.execute(f"""SELECT id, url, city, site_name FROM pharm WHERE file_name = '{file_name}' 
+        ORDER BY site_name;""")
+        if cursor.fetchone is not None:
+            return cursor.fetchall()
